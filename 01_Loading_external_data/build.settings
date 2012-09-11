@@ -1,0 +1,22 @@
+settings = 
+{
+	orientation =
+	{
+		default = "portrait",
+		supported =
+		{
+			"portrait"
+		}
+	},
+	iphone =
+	{
+		plist =
+		{
+	        CFBundleIconFiles = {
+	           "Icon.png"
+	        },
+			UIPrerenderedIcon = true,
+			UIStatusBarHidden=true
+		}
+	}
+}
