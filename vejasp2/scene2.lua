@@ -3,7 +3,10 @@ local json = require "json"
 local widget = require("widget")
 
 local scene = storyboard.newScene()
+local widgetGroup
+local rowTitles = {}
 local text2
+local list
 
 local function onSceneTouch( self, event )
   if event.phase == "began" then
@@ -13,6 +16,14 @@ local function onSceneTouch( self, event )
 end
 
 function scene:createScene( event )
+  widgetGroup = self.view
+  list = widget.newTableView{
+    width = 320, 
+    height = 448,
+    bottomPadding = 8,
+    maskFile = "mask-320x448.png"
+  }
+  widgetGroup:insert(list)
 end
 
 function scene:enterScene( event )
@@ -25,17 +36,6 @@ end
 
 function scene:destroyScene( event )
 end
-
-local widgetGroup = display.newGroup()
-local rowTitles = {}
-local list = widget.newTableView{
-  width = 320, 
-  height = 448,
-  bottomPadding = 8,
-  maskFile = "mask-320x448.png"
-}
-
-widgetGroup:insert(list)
 
 local function onRowRender( event )
   local row = event.row
@@ -56,7 +56,6 @@ local function onRowTouch( event )
   row.reRender = true
   options = { params = {id = event.id} }
   storyboard.gotoScene( "scene3", options )
-  print 'fred'
   return true
 end
 
