@@ -1,20 +1,40 @@
+local storyboard = require( "storyboard" )
 local json = require "json"
 local widget = require("widget")
-local storyboard = require "storyboard"
 
-local widgetGroup = display.newGroup()
+local scene = storyboard.newScene()
+local widgetGroup
 local rowTitles = {}
-local list = widget.newTableView{
-  width = 320, 
-  height = 448,
-  bottomPadding = 8,
-  maskFile = "mask-320x448.png"
-}
+local text2
+local list
 
-local button = display.newText("Buscar", (display.contentWidth - 65), (display.contentHeight - 30), nil, 15)
-local textfield = native.newTextField(1, (display.contentHeight - 30), 240, 25 )
+local function onSceneTouch( self, event )
+  if event.phase == "began" then
+    return true
+  end
+end
 
-widgetGroup:insert(list)
+function scene:createScene( event )
+  widgetGroup = self.view
+  list = widget.newTableView{
+    width = 320, 
+    height = 448,
+    bottomPadding = 8,
+    maskFile = "images/mask-320x448.png"
+  }
+  widgetGroup:insert(list)
+end
+
+function scene:enterScene( event )
+  storyboard.purgeScene( "scenes.search" )
+  search_establishments(event.params.search_term)
+end
+
+function scene:exitScene( event )
+end
+
+function scene:destroyScene( event )
+end
 
 local function onRowRender( event )
   local row = event.row
@@ -33,15 +53,10 @@ local function onRowTouch( event )
   local row = event.target
   local rowGroup = event.view
   row.reRender = true
-  print( "You touched row #" .. event.id )
+  options = { params = {id = event.id} }
+  storyboard.gotoScene( "scenes.establishment_details", options )
   return true
 end
-
-function button:tap( event )
-  search_establishments()
-end
-
-button:addEventListener( "tap", button )
 
 networkListener = function(event)
   if (event.isError) then
@@ -67,7 +82,14 @@ render_establishment_list = function(establishments)
   end
 end
 
-search_establishments = function()
-  local url = "http://stage.estabelecimentos.api.abril.com.br/estabelecimentos/busca?order=nome&nome=" .. textfield.text
+search_establishments = function(search_term)
+  local url = "http://stage.estabelecimentos.api.abril.com.br/estabelecimentos/busca?order=nome&nome=" .. search_term
   network.request( url, "GET", networkListener )
 end
+
+scene:addEventListener( "createScene", scene )
+scene:addEventListener( "enterScene", scene )
+scene:addEventListener( "exitScene", scene )
+scene:addEventListener( "destroyScene", scene )
+
+return scene
