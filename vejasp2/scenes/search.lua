@@ -1,5 +1,6 @@
 local storyboard = require( "storyboard" )
 local scene = storyboard.newScene()
+local widget = require("widget")
 
 local search_button, search_textfield, label_title
 
@@ -18,9 +19,15 @@ function scene:createScene( event )
   local screenGroup = self.view
   label_title = display.newText( "Estabelecimentos", 15, 35, (display.contentWidth - 30), 40, "Helvetica", 22 )
 
-  search_textfield = native.newTextField(15, 80, 220, 25 )
+  search_textfield = native.newTextField(15, 80, (display.contentWidth - 30), 25 )
 
-  search_button = display.newText( "Buscar", (display.contentWidth - 75), 80, native.systemFontBold, 15 )
+  search_button = widget.newButton{
+    left = 15,
+    top = 115,
+    label = "Buscar",
+    cornerRadius = 3,
+    onEvent = onSearchButtonTouch
+  }
   search_button.touch = onSearchButtonTouch
   screenGroup:insert( search_button )
   screenGroup:insert( search_textfield )
